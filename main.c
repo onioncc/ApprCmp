@@ -19,7 +19,7 @@ void GraphTransform();
 int Strcmp(char* s1, char* s2);
 void InitialFUTypes();
 
-
+// return the final result
 unsigned long long timeGetTime()
 {
         struct timeval tv;
