@@ -206,11 +206,11 @@ void FuncUnit::init(int t, int e = 1000, int d = 1, int a = 1000)
 	delay = d;
 	area = a;
 
-	resetAllInst();
+	freeAllInst();
 }
 
 
-void FuncUnit::resetAllInst()
+void FuncUnit::freeAllInst()
 {
 	num_inst_avail = num_inst_total;
 
@@ -257,6 +257,7 @@ int FuncUnit::assignInst()
 	instances[i].available = 0;
 	num_inst_avail--;
 
+	// always keep the largest "inst_used" during the whole scheduling
 	used = num_inst_total - num_inst_avail;
 	num_inst_used = (num_inst_used < used) ? used : num_inst_used;
 
@@ -280,10 +281,23 @@ int FuncUnit::usedInstNum()
 	return num_inst_used;
 }
 
-int FuncUnit::setTotalInstNum(int num)
+void FuncUnit::setTotalInstNum(int num)
 {
 	num_inst_total = num;
 }
 
 
+int FuncUnit::getEnergy()
+{
+	return this->energy;
+}
 
+int FuncUnit::usedInstNumFinal()
+{
+	return num_inst_used_final;
+}
+
+void FuncUnit::setUsedInstNumFinal( int num )
+{
+	num_inst_used_final = num;
+}

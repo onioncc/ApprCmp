@@ -2,6 +2,8 @@
 #include "dcl.h"
 #include "utility.h"
 
+void InitResource();
+
 
 void ASAP()
 {
@@ -163,13 +165,21 @@ void printAllResource()
 	printf("\n");
 }
 
-void printUsedResource()
+void collectUsedResource()
 {
+
+	energy_local = 0;
 	for(int FU_id = 1; FU_id <= FU_num; FU_id++) {
-		printf("FU_%d: %d  ", FU_id, FUs[FU_id].usedInstNum());
+//		printf("FU_%d: %d  ", FU_id, FUs[FU_id].usedInstNum());
+
+		FU_inst_local[FU_id] = FUs[FU_id].usedInstNum();
+		energy_local += FUs[FU_id].usedInstNum() * FUs[FU_id].getEnergy();
 	}
-	printf("\n");
+//	printf("\nTotal Energy: %d\n", energy);
 }
+
+
+
 
 int ListSched( int LAT )
 {
@@ -190,13 +200,8 @@ int ListSched( int LAT )
 	LS_initilization();
 	collectReadyOP();
 
-	for(FU_id = 1; FU_id <= FU_num; FU_id++) {
-		FUs[FU_id].resetAllInst();
-	}
-
 	//printf("All available Resources:\n");
 	//printAllResource();
-
 
 	// Start to schedule
 	op_done = 0;
@@ -217,7 +222,7 @@ int ListSched( int LAT )
 		// Assign operators according to their FU types
 		for(FU_id = 1; FU_id <= FU_num; FU_id++) {
 
-			FUs[FU_id].resetAllInst();
+			FUs[FU_id].freeAllInst();
 			sched_op_num = 0;
 			while( FUs[FU_id].instAvailable() ) {
 
@@ -289,7 +294,35 @@ void printSchedBind()
 	}
 }
 
-void InitScheduling()
+
+void printSchedBind_final()
+{
+	for(int FU_id = 1; FU_id <= FU_num; FU_id++) {
+		printf("FU_%d: %d  ", FU_id, FUs[FU_id].usedInstNumFinal());
+	}
+	printf("Total Energy Final: %d\n", energy_global);
+
+	for(int nd = 1; nd <= nd_max; nd++ ) {
+		printf("Node %d (%d): sched to TS %d, assigned to inst %d of FU %d\n",
+			nd, node[nd].op, node[nd].sched_ts_final, node[nd].FU_alloc_final, node[nd].op);
+	}
+}
+
+
+
+void printUsedResource()
+{
+	int energy = 0;
+	for(int FU_id = 1; FU_id <= FU_num; FU_id++) {
+		printf("FU_%d: %d  ", FU_id, FUs[FU_id].usedInstNum());
+		energy += FUs[FU_id].usedInstNum() * FUs[FU_id].getEnergy();
+	}
+	printf("\nTotal Energy: %d\n", energy);
+}
+
+
+
+void Sched_Bind( int iter )
 {
 	ASAP();
 	ALAP();
@@ -303,6 +336,7 @@ void InitScheduling()
 	//}
 
 	// initialize the total number of ADDs and MULs (FU)
+	InitResource();
 
 	LAT = latency_min * 1.5;
 	while( 1 ) {
@@ -313,11 +347,12 @@ void InitScheduling()
 			// list scheduling and resource assignment succeeded
 			LAT_achieved = ts;
 
-			printf("\n\n###### Program Finished ######\n");
-			printf("List Scheduling Finished.\n");
+			printf("\n\n---- Iteration %d ----\n", iter);
 			printf("Achieved Latency: %d\n", LAT_achieved);
 			printUsedResource();
-			printSchedBind();
+			//printSchedBind();
+
+			collectUsedResource();
 
 			break;
 		}
@@ -325,7 +360,6 @@ void InitScheduling()
 
 			collectRemainingOP();
              
-
 			// First, if actually used FU instances are smaller than allocated ones
 			// decrease the number of allocated FU instances
 			for(FU_id = 1; FU_id <= FU_num; FU_id++) {
@@ -348,5 +382,20 @@ void InitScheduling()
 			}
 		}
 	}
+}
 
+
+
+void saveSolution()
+{	
+	for(int nd = 1; nd <= nd_max; nd++ ) {
+		node[nd].sched_ts_final = node[nd].sched_ts;
+		node[nd].FU_alloc_final = node[nd].FU_alloc;
+	}
+
+	for(int FU_id = 1; FU_id <= FU_num; FU_id++) {
+		FUs[FU_id].setUsedInstNumFinal( FUs[FU_id].usedInstNum() );
+	}
+
+	energy_global = energy_local;
 }

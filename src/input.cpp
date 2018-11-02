@@ -61,6 +61,14 @@ void ReadInput( char* name )
     	maximize(nd_max, nb);
    		node[nb].op = op;
 
+   		// Error Check: If the input OP is larger than available FU
+   		// Resource Initilization needs to be modified
+   		if( op > FU_num ) {
+   			printf("The provided number of FUs (%d < %d) are not enough. ", FU_num, op);
+   			printf("Please re-assign FU resources.\n");
+   			exit(0);
+   		}
+
 		NextLine(line_buf, fo);
 		sscanf(line_buf,"%d %d",&nb, &op);
 
@@ -153,15 +161,3 @@ void InitGraph()
 	//OutputGraph();
 }
 
-
-
-void InitResource()
-{
-
-	FU_num = 3;
-
-	FUs[1].init(1, 2000, 1, 1000);	// ADD1 -> op: 1
-	FUs[2].init(2, 5000, 1, 4000);	// MUL1 -> op: 2
-	FUs[3].init(3, 3000, 1, 4000);	// MUL2 -> op: 3
-
-}

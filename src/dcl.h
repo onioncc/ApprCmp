@@ -25,21 +25,17 @@ using namespace std;
 
 
 #ifdef DEBUG
-#define ED		100
+#define ED		200
 #define ED1		2*ED+1
 #define ND		200
 #define TS_MAX	ED
-#define ADD_DCL	50
-#define MUL_DCL	50
-#define FU_DCL  20
+#define FU_DCL  50
 #else
-#define ED		10000
+#define ED		20000
 #define ED1		2*ED+1
 #define ND		20000
 #define TS_MAX	ED
-#define ADD_DCL	500
-#define MUL_DCL	500
-#define FU_DCL  20
+#define FU_DCL  500
 #endif
 
 
@@ -81,17 +77,12 @@ typedef struct {
     int 	sched_ts;
     int 	priority;
     int 	FU_alloc;
+
+    // final solutions
+    int 	sched_ts_final;
+    int 	FU_alloc_final;
  } Node;
 
-
-typedef struct {
-	int 	available;
-} ADD_FU;
-
-
-typedef struct {
-	int 	available;
-} MUL_FU;
 
 
 class FUInst    // functional unit instances
@@ -106,14 +97,17 @@ class FuncUnit  // functional unit definition
 public:
     void init(int type, int energy, int delay, int area);
     void instIncrease();
-    int instDecrease();
+    int  instDecrease();
     bool instAvailable();
-    int assignInst();
-    void resetAllInst();
-    int availInstNum();
-    int setTotalInstNum(int num);
-    int totalInstNum();
-    int usedInstNum();
+    int  assignInst();
+    void freeAllInst();
+    int  availInstNum();
+    void setTotalInstNum(int num);
+    int  totalInstNum();
+    int  usedInstNum();
+    int  usedInstNumFinal();
+    void setUsedInstNumFinal(int num);
+    int  getEnergy();
 private:
     int type;   // 1: ADD; 2: MUL
     int energy;
@@ -122,6 +116,7 @@ private:
     int num_inst_total; // total number of instances of this FU type
     int num_inst_avail; // currently available number of instances
     int num_inst_used;  // actually used instances
+    int num_inst_used_final;  // actually used instances
     FUInst instances[FU_DCL];
 };
 
@@ -142,8 +137,10 @@ EXT int FU_num;
 EXT FuncUnit FUs[FU_DCL];
 
 // number of final FU instances of each type
-EXT int FU_inst_global[FU_DCL];
 EXT int FU_inst_local[FU_DCL];
+EXT int FU_inst_global[FU_DCL];
+EXT int energy_local;
+EXT int energy_global;
 
 
 // latency constraint
