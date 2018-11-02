@@ -297,15 +297,15 @@ void printSchedBind()
 
 void printSchedBind_final()
 {
-	for(int FU_id = 1; FU_id <= FU_num; FU_id++) {
-		printf("FU_%d: %d  ", FU_id, FUs[FU_id].usedInstNumFinal());
-	}
-	printf("Total Energy Final: %d\n", energy_global);
-
 	for(int nd = 1; nd <= nd_max; nd++ ) {
 		printf("Node %d (%d): sched to TS %d, assigned to inst %d of FU %d\n",
 			nd, node[nd].op, node[nd].sched_ts_final, node[nd].FU_alloc_final, node[nd].op);
 	}
+	
+	for(int FU_id = 1; FU_id <= FU_num; FU_id++) {
+		printf("FU_%d: %d  ", FU_id, FUs[FU_id].usedInstNumFinal());
+	}
+	printf("Total Energy Final: %d\n", energy_global);
 }
 
 
@@ -338,7 +338,10 @@ void Sched_Bind( int iter )
 	// initialize the total number of ADDs and MULs (FU)
 	InitResource();
 
+	
 	LAT = latency_min * 1.5;
+	printf("latency_min: %d\n", latency_min);
+	printf("Latency Constraint: %d\n", LAT);
 	while( 1 ) {
 		ts = ListSched(LAT);
 

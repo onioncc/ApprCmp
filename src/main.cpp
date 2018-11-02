@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 
 	printf("##### Scheduling and Binding Started #####\n");
 	energy_global = -1;
-	for(int i = 1; i <= 10; i++) {
+	for(int i = 1; i <= 100; i++) {
 		Sched_Bind( i );
 		if( energy_global == -1 || energy_global > energy_local ) {
 			

@@ -33,7 +33,7 @@ void ReadInput( char* name )
 	FILE* fo;
 
 	char inFileName[128];
-	sprintf(inFileName, "%s.dat", name); 
+	sprintf(inFileName, "./testcase/%s.dat", name); 
 	char line_buf[128];
 	int n1, n2, nb, op;
 
