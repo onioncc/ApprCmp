@@ -1,2 +1,0 @@
-# ApprCmp
-Approximate Computing
