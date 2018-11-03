@@ -1,13 +1,15 @@
 #define MAIN
 
 #include "dcl.h"
+#include "classes.h"
 
 
-void ReadInput( char* name );
+void ReadInputGraph( char* name );
 void InitGraph();
-void Sched_Bind( int iter );
+void Sched_Bind( int iter, float LAT_factor );
 void saveSolution();
 void printSchedBind_final();
+void DFGSimulation( char* name );
 
 void InitResource()
 {
@@ -35,14 +37,24 @@ int main(int argc, char** argv)
 	}
 
 	InitResource();
-	ReadInput( name );
+	ReadInputGraph( name );
 	InitGraph();	
 	printf("DFG Initialization Finished\n");
 
+	
+	DFGSimulation( name );
+	printf("DFG Simulation Finished\n");
+
+
+
+	return 0;
+
 	printf("##### Scheduling and Binding Started #####\n");
+
+	float LAT_factor = 1.5;
 	energy_global = -1;
 	for(int i = 1; i <= 100; i++) {
-		Sched_Bind( i );
+		Sched_Bind( i, LAT_factor );
 		if( energy_global == -1 || energy_global > energy_local ) {
 			
 			// accept as best global solution

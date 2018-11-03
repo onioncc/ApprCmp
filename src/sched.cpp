@@ -1,6 +1,6 @@
 
 #include "dcl.h"
-#include "utility.h"
+#include "classes.h"
 
 void InitResource();
 
@@ -322,7 +322,7 @@ void printUsedResource()
 
 
 
-void Sched_Bind( int iter )
+void Sched_Bind( int iter, float LAT_factor )
 {
 	ASAP();
 	ALAP();
@@ -339,9 +339,9 @@ void Sched_Bind( int iter )
 	InitResource();
 
 	
-	LAT = latency_min * 1.5;
-	printf("latency_min: %d\n", latency_min);
-	printf("Latency Constraint: %d\n", LAT);
+	LAT = latency_min * LAT_factor;
+	//printf("latency_min: %d\n", latency_min);
+	//printf("Latency Constraint: %d\n", LAT);
 	while( 1 ) {
 		ts = ListSched(LAT);
 

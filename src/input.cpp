@@ -1,7 +1,7 @@
 
 
 #include "dcl.h"
-#include "utility.h"
+#include "classes.h"
 
 
 void NextLine(char *line_buf, FILE* fp)
@@ -27,7 +27,7 @@ int Strcmp(char* s1, char* s2)
 }
 
 
-void ReadInput( char* name )
+void ReadInputGraph( char* name )
 {
 
 	FILE* fo;
@@ -35,7 +35,7 @@ void ReadInput( char* name )
 	char inFileName[128];
 	sprintf(inFileName, "./testcase/%s.dat", name); 
 	char line_buf[128];
-	int n1, n2, nb, op;
+	int n1, n2, nb, op, pi, po;
 
 	if( (fo = fopen(inFileName, "r")) == NULL ) {
 		printf("Cannot open input file %s\n", inFileName);
@@ -51,10 +51,13 @@ void ReadInput( char* name )
 	for( nb = 1; nb < ND; nb++ ) {
 		node[nb].in_degree = 0;
 		node[nb].out_degree = 0;
+		node[nb].prim_in1 = 0;
+		node[nb].prim_in2 = 0;
+		node[nb].prim_out = 0;
 	}
 
 
-	// Input Node Data
+	// Read Node Data
 	NextLine(line_buf, fo);
     sscanf(line_buf,"%d %d", &nb, &op);
     while(nb > 0) {
@@ -75,7 +78,7 @@ void ReadInput( char* name )
     }
     printf("nd_max: %d\n", nd_max);
 
-    // Input Edge Data
+    // Read Edge Data
     NextLine(line_buf, fo);
     sscanf(line_buf, "%d %d", &n1, &n2);
     while(n1 > 0) {
@@ -93,6 +96,40 @@ void ReadInput( char* name )
     	sscanf(line_buf, "%d %d", &n1, &n2);
     }
     printf("ed_max: %d\n", ed_max);
+
+
+
+    // Read Primary Inputs
+    prim_in_num = 0;
+    NextLine(line_buf, fo);
+    sscanf(line_buf, "%d %d", &pi, &nb);
+    while(pi > 0) {
+    	
+		maximize(prim_in_num, pi);
+    	if( node[nb].prim_in1 == 0 ) {
+    		node[nb].prim_in1 = pi;
+    	}
+    	else {
+    		node[nb].prim_in2 = pi;
+    	}
+    	
+
+		NextLine(line_buf, fo);
+    	sscanf(line_buf, "%d %d", &pi, &nb);
+    }
+    
+
+	// Read Primary Outputs
+    NextLine(line_buf, fo);
+    sscanf(line_buf, "%d %d", &nb, &po);
+    while(nb > 0) {
+    	
+    	node[nb].prim_out = po;
+
+		NextLine(line_buf, fo);
+    	sscanf(line_buf, "%d %d", &nb, &po);
+    }
+
 
 }
 

@@ -13,6 +13,8 @@
 #include <math.h>
 #include <sys/time.h>
 #include <assert.h>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -62,67 +64,42 @@ typedef struct {
 	int		node;
 	int		id;
     int		next;
+    float 	DFG_value;
 } Edge;
 
 
 typedef struct {
-    int		op;	// 1: ADD; 2: MUL
+    int		op;	// 1: ADD; 2: MUL; 3: SQRT
     int		in_degree;
     int		out_degree;
     int		in_dgr_tmp;
     int		out_dgr_tmp;
     int		edge;
+
+    // for primary IO
+    int 	prim_in1;
+    int 	prim_in2;
+    int 	prim_out;
+    float 	prim_in1_val;
+    float 	prim_in2_val;
+    float 	prim_out_val;
+
+    // for sched and bind
     int		asap;
     int		alap;
     int 	sched_ts;
     int 	priority;
     int 	FU_alloc;
 
-    // final solutions
+    // final sched and bind solutions
     int 	sched_ts_final;
     int 	FU_alloc_final;
  } Node;
 
 
 
-class FUInst    // functional unit instances
-{
-public:
-    bool available;
-};
-
-
-class FuncUnit  // functional unit definition
-{
-public:
-    void init(int type, int energy, int delay, int area);
-    void instIncrease();
-    int  instDecrease();
-    bool instAvailable();
-    int  assignInst();
-    void freeAllInst();
-    int  availInstNum();
-    void setTotalInstNum(int num);
-    int  totalInstNum();
-    int  usedInstNum();
-    int  usedInstNumFinal();
-    void setUsedInstNumFinal(int num);
-    int  getEnergy();
-private:
-    int type;   // 1: ADD; 2: MUL
-    int energy;
-    int delay;
-    int area;   // use LUTs to represent area in FPGA
-    int num_inst_total; // total number of instances of this FU type
-    int num_inst_avail; // currently available number of instances
-    int num_inst_used;  // actually used instances
-    int num_inst_used_final;  // actually used instances
-    FUInst instances[FU_DCL];
-};
-
-
-
 /////////////// Global Variables ///////////
+
 
 // edges and nodes of the DFG
 EXT Edge edge[ED1+1];
@@ -131,10 +108,9 @@ EXT Node node[ND+1];
 EXT int nd_max;
 EXT int ed_max;
 
-
-// number of FUs (not instances)
-EXT int FU_num;
-EXT FuncUnit FUs[FU_DCL];
+EXT int prim_in_max;
+EXT int prim_in_num;
+EXT int prim_out_num;
 
 // number of final FU instances of each type
 EXT int FU_inst_local[FU_DCL];
