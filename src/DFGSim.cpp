@@ -9,37 +9,6 @@ void NextLine(char *line_buf, FILE* fp);
 float prim_in_vals[PRIM_IN_DCL];
 
 
-/*void ReadPrimInputs( char* name )
-{
-	char inFileName[128];
-	sprintf(inFileName, "./testcase/%s_in.dat", name); 
-
-	char line_buf[128];
-	float prim_in;
-	FILE* fo;
-
-	if( (fo = fopen(inFileName, "r")) == NULL ) {
-		printf("Cannot open input file %s\n", inFileName);
-		exit(0);
-	}
-
-
-	// Read primary inputs value
-	for( int i = 1; i <= prim_in_num; i++ ) {
-		NextLine(line_buf, fo);
-    	sscanf(line_buf,"%f", &prim_in);	
-    	prim_in_vals[i] = prim_in;
-	}
-
-    printf("# of primary inputs: %d\n", prim_in_num);
-    for(int i = 1; i <= prim_in_num; i++) {
-    	printf("%f ", prim_in_vals[i]);
-    }
-    printf("\n");
-}*/
-
-
-
 void ReadPrimInputs( char* name, int set )
 {
 	char inFileName[128];
@@ -50,11 +19,11 @@ void ReadPrimInputs( char* name, int set )
 	ifs.seekg( (set-1) * 4 * prim_in_num);
 	ifs.read((char*)(&prim_in_vals[1]), prim_in_num*sizeof(float));
 
-    printf("# of primary inputs: %d\n", prim_in_num);
-    for(int i = 1; i <= prim_in_num; i++) {
-    	printf("%f ", prim_in_vals[i]);
-    }
-    printf("\n");
+    //printf("# of primary inputs: %d\n", prim_in_num);
+    //for(int i = 1; i <= prim_in_num; i++) {
+    //	printf("%f ", prim_in_vals[i]);
+    //}
+    //printf("\n");
 }
 
 
@@ -62,15 +31,15 @@ void AssignDFGPrimIn()
 {
 	int nd;
 	for( nd = 1; nd < nd_max; nd++ ) {
-		printf("Node %d\n", nd);
+		//printf("Node %d\n", nd);
 
 		if( node[nd].prim_in1 > 0 ) {
 			node[nd].prim_in1_val = prim_in_vals[node[nd].prim_in1];
-			printf("Prim In1: %f\n", node[nd].prim_in1_val);
+			//printf("Prim In1: %f\n", node[nd].prim_in1_val);
 		}
 		if( node[nd].prim_in2 > 0 ) {
 			node[nd].prim_in2_val = prim_in_vals[node[nd].prim_in2];
-			printf("Prim In2: %f\n", node[nd].prim_in2_val);
+			//printf("Prim In2: %f\n", node[nd].prim_in2_val);
 		}
 	}
 
@@ -162,7 +131,7 @@ void ComputeAlongDFG()
 			// ... more approximate types
 		}
 
-		printf("Output of Node %d: %f\n", nd, res);
+		//printf("Output of Node %d: %f\n", nd, res);
 
 		// if node is already the primary output
 		if( node[nd].prim_out > 0 ) {
@@ -215,15 +184,13 @@ void DFGSimulation( char* name )
 	ComputeAlongDFG();
 	printPrimOuts();
 
-	// primary input set 2
-	ReadPrimInputs( name, 2 );
-	AssignDFGPrimIn();
-	ComputeAlongDFG();
-	printPrimOuts();
 
-	// primary input set 3
-	ReadPrimInputs( name, 3 );
-	AssignDFGPrimIn();
-	ComputeAlongDFG();
-	printPrimOuts();
+	for( int grp = 2; grp <= 19; grp++ ) {
+		// primary input set grp
+		printf("\nGroup %d\n", grp);
+		ReadPrimInputs( name, grp );
+		AssignDFGPrimIn();
+		ComputeAlongDFG();
+		printPrimOuts();	
+	}
 }
