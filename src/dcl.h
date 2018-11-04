@@ -112,6 +112,10 @@ EXT int prim_in_max;
 EXT int prim_in_num;
 EXT int prim_out_num;
 
+// fixed value primary inputs (for NN, treated as weights)
+EXT int prim_in_fix_num;
+
+
 // number of final FU instances of each type
 EXT int FU_inst_local[FU_DCL];
 EXT int FU_inst_global[FU_DCL];

@@ -46,7 +46,6 @@ int main(int argc, char** argv)
 	printf("DFG Simulation Finished\n");
 
 
-
 	return 0;
 
 	printf("##### Scheduling and Binding Started #####\n");

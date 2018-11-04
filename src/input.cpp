@@ -98,8 +98,28 @@ void ReadInputGraph( char* name )
     printf("ed_max: %d\n", ed_max);
 
 
+    // Read Primary Inputs (fixed)
+    prim_in_fix_num = 0;
+    NextLine(line_buf, fo);
+    sscanf(line_buf, "%d %d", &pi, &nb);
+    while(pi > 0) {
+    	
+		maximize(prim_in_fix_num, pi);
 
-    // Read Primary Inputs
+    	if( node[nb].prim_in1 == 0 ) {
+    		node[nb].prim_in1 = pi;
+    	}
+    	else {
+    		node[nb].prim_in2 = pi;
+    	}
+    	
+
+		NextLine(line_buf, fo);
+    	sscanf(line_buf, "%d %d", &pi, &nb);
+    }
+
+
+    // Read Primary Inputs (variables)
     prim_in_num = 0;
     NextLine(line_buf, fo);
     sscanf(line_buf, "%d %d", &pi, &nb);
@@ -129,7 +149,6 @@ void ReadInputGraph( char* name )
 		NextLine(line_buf, fo);
     	sscanf(line_buf, "%d %d", &nb, &po);
     }
-
 
 }
 

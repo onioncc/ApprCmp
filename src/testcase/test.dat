@@ -25,6 +25,11 @@
 
 ** for primary inputs and outputs
 ** primary input ID  -->  node ID
+
+** Fixed primary inputs
+-1
+
+** Variables
 1 1
 4 1
 2 2
@@ -40,4 +45,8 @@
 3 1
 7 2
 -1
+
+
+
+
 
